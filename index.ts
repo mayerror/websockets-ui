@@ -1,6 +1,7 @@
 import { httpServer } from "./src/http_server";
 import { RawData, WebSocketServer, WebSocket } from "ws";
 import * as http from "http";
+import middleware from "./src/http_server/utils/middleware";
 
 const HTTP_PORT = 8181;
 
@@ -26,8 +27,3 @@ wss.on("connection", function connection(ws) {
 
 httpServer.listen(HTTP_PORT);
 console.log(`Start static http server on the ${HTTP_PORT} port!`);
-
-const middleware = (wss: WebSocketServer, data: RawData) => {
-  console.log(wss.clients.size);
-  console.log(data.toString());
-};
