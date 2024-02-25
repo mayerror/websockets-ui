@@ -1,6 +1,6 @@
 import type Player from "./player";
 
-class Game {
+class Room {
   players: Player[];
   id: number;
 
@@ -10,4 +10,4 @@ class Game {
   }
 }
 
-export default Game;
+export default Room;
