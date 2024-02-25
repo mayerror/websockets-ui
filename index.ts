@@ -1,20 +1,20 @@
+import { WebSocketServer } from "ws";
 import { httpServer } from "./src/http_server";
-import { RawData, WebSocketServer, WebSocket } from "ws";
-import * as http from "http";
-import middleware from "./src/http_server/utils/middleware";
-import { WsAnswer } from "./src/types";
-import Player from "./src/http_server/utils/player";
+import { type WsAnswer } from "./src/types";
+import type Player from "./src/utils/player";
+import middleware from "./src/utils/middleware";
+import registerPlayer from "./src/modules/registerPlayer";
 
 const HTTP_PORT = 8181;
+const WS_PORT = 3000;
 
-const wss = new WebSocketServer({ port: 3000 });
-const players: Array<Player> = [];
+const wss = new WebSocketServer({ port: WS_PORT });
+export const players: Player[] = [];
 
 wss.on("connection", (ws) => {
-  const clients = wss.clients;
   ws.on("error", console.error);
 
-  //broadcasting
+  // broadcasting
   // ws.on("message", (data, isBinary) => {
   //   clients.forEach(function each(client) {
   //     if (client !== ws && client.readyState === WebSocket.OPEN) {
@@ -22,33 +22,23 @@ wss.on("connection", (ws) => {
   //     }
   //   });
   // });
-  ws.on("message", (message) => {
-    console.log(message);
+  ws.on("message", (message, isBinary) => {
     try {
-      const { type, data }: WsAnswer = JSON.parse(message.toString());
-      // const { type, data }: WsAnswer = JSON.parse(message as unknown as string);
+      if (!isBinary && Buffer.isBuffer(message)) {
+        const { type, data }: WsAnswer = JSON.parse(message.toString("utf8"));
 
-      if (type) {
-        switch (type) {
-          case "reg":
-            const { name, password } = JSON.parse(data);
-            if (typeof name === "string" && typeof password === "string") {
-              let id = 0;
-              while (true) {
-                id = Math.floor(Math.random() * 1000);
-                if (!players.some((player) => player.id === id)) {
-                  break;
-                }
-              }
-              players.push(new Player(name, password, id));
-              console.log(JSON.stringify(players));
-            }
-            break;
+        if (type.length > 0) {
+          switch (type) {
+            case "reg":
+              ws.send(registerPlayer(data, players));
+              break;
 
-          default:
-            break;
+            default:
+              break;
+          }
         }
       }
+      // const { type, data }: WsAnswer = JSON.parse(message as unknown as string);
     } catch (error) {
       console.error(error);
     }
@@ -58,7 +48,7 @@ wss.on("connection", (ws) => {
     middleware(wss, data);
   });
 
-  console.log("Connection established");
+  console.log(`Start websocket server on the ${WS_PORT} port!`);
 });
 
 httpServer.listen(HTTP_PORT);

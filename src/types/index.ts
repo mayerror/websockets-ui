@@ -3,4 +3,4 @@ interface WsAnswer {
   data: string;
 }
 
-export { WsAnswer };
+export type { WsAnswer };

@@ -1,5 +1,5 @@
 import { RawData, WebSocketServer } from "ws";
-import { WsAnswer } from "../../types";
+import { WsAnswer } from "../types";
 
 const middleware = (wss: WebSocketServer, rawData: RawData) => {
   const { type, data }: WsAnswer = JSON.parse(rawData.toString());
