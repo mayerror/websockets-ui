@@ -1,16 +1,17 @@
+import { type MyWebSocket } from "../types";
 import createAnswer from "../utils/createAnswer";
 import Player from "../utils/player";
 
-function generateUniqID(playerList: Player[]): number {
+export function generateUniqID<T>(itemList: Array<T & { id?: number }>): number {
   while (true) {
     const id = Math.floor(Math.random() * 1000);
-    if (!playerList.some((player) => player.id === id)) {
+    if (!itemList.some((item) => item.id === id)) {
       return id;
     }
   }
 }
 
-function registerPlayer(data: string, players: Player[]): string {
+function registerPlayer(data: string, players: Player[], ws: MyWebSocket): string {
   const { name, password } = JSON.parse(data);
   if (typeof name === "string" && typeof password === "string") {
     const id = generateUniqID(players);
@@ -26,6 +27,7 @@ function registerPlayer(data: string, players: Player[]): string {
       data.errorText = "This name already exists";
     } else {
       players.push(new Player(name, password, id));
+      ws.id = id;
     }
     return createAnswer("reg", data);
   }

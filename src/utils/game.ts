@@ -1,8 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
-// class Game {
-//   constructor() {
-//     players: 0;
-//     gameID: "";
-//     roomID: "";
-//   }
-// }
+import type Player from "./player";
+
+class Game {
+  players: Player[];
+  id: number;
+
+  constructor(player: Player, id: number) {
+    this.players = [player];
+    this.id = id;
+  }
+}
+
+export default Game;
