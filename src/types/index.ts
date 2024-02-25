@@ -3,4 +3,9 @@ interface WsAnswer {
   data: string;
 }
 
-export type { WsAnswer };
+interface PlayerStats {
+  name: string;
+  wins: number;
+}
+
+export type { WsAnswer, PlayerStats };

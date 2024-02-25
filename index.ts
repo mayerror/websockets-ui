@@ -1,9 +1,10 @@
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { httpServer } from "./src/http_server";
 import { type WsAnswer } from "./src/types";
 import type Player from "./src/utils/player";
 import middleware from "./src/utils/middleware";
 import registerPlayer from "./src/modules/registerPlayer";
+import updateWinners from "./src/modules/updateWinners";
 
 const HTTP_PORT = 8181;
 const WS_PORT = 3000;
@@ -31,6 +32,11 @@ wss.on("connection", (ws) => {
           switch (type) {
             case "reg":
               ws.send(registerPlayer(data, players));
+              wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                  client.send(updateWinners(players));
+                }
+              });
               break;
 
             default:
@@ -38,7 +44,6 @@ wss.on("connection", (ws) => {
           }
         }
       }
-      // const { type, data }: WsAnswer = JSON.parse(message as unknown as string);
     } catch (error) {
       console.error(error);
     }

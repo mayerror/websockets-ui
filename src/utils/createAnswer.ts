@@ -1,4 +1,7 @@
-function createAnswer(type: string, data: Record<string, unknown>): string {
+function createAnswer(
+  type: string,
+  data: Record<string, unknown> | Array<Record<string, unknown>>
+): string {
   const answer = {
     type,
     data: JSON.stringify(data),
