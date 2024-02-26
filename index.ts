@@ -73,6 +73,7 @@ wss.on("connection", (ws: MyWebSocket) => {
               const room = addShips(data, roomes);
               if (room !== undefined && room.shipsLaunched()) {
                 specBroadcast(wsClients, room, "SG");
+                specBroadcast(wsClients, room, "ST");
               }
               break;
             }
