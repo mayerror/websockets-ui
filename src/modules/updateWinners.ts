@@ -1,5 +1,5 @@
 import createAnswer from "../utils/createAnswer";
-import type Player from "../utils/player";
+import type Player from "../types/player";
 
 function updateWinners(players: Player[]): string {
   if (players.length > 0) {

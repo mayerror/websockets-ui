@@ -1,5 +1,5 @@
 import createAnswer from "../utils/createAnswer";
-import type Room from "../utils/room";
+import type Room from "../types/room";
 
 function updateRoom(roomes: Room[]): string {
   const availableRoomes = roomes

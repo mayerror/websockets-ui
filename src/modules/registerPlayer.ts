@@ -1,6 +1,6 @@
 import { type MyWebSocket } from "../types";
 import createAnswer from "../utils/createAnswer";
-import Player from "../utils/player";
+import Player from "../types/player";
 
 export function generateUniqID<T>(itemList: Array<T & { id?: number }>): number {
   while (true) {

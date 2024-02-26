@@ -8,6 +8,10 @@ class Room {
     this.players = [player];
     this.id = id;
   }
+
+  gameIsOn(): boolean {
+    return this.players.length === 2;
+  }
 }
 
 export default Room;

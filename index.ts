@@ -1,8 +1,8 @@
 import { WebSocketServer } from "ws";
 import { httpServer } from "./src/http_server";
 import { type MyWebSocket, type WsAnswer } from "./src/types";
-import type Player from "./src/utils/player";
-import type Room from "./src/utils/room";
+import type Player from "./src/types/player";
+import type Room from "./src/types/room";
 import middleware from "./src/utils/middleware";
 import registerPlayer from "./src/modules/registerPlayer";
 import updateWinners from "./src/modules/updateWinners";

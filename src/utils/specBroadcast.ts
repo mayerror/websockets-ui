@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import type Room from "./room";
+import type Room from "../types/room";
 import { type MyWebSocket } from "../types";
 import createGame from "../modules/createGame";
 

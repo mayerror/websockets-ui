@@ -1,5 +1,5 @@
-import type Player from "../utils/player";
-import type Room from "../utils/room";
+import type Player from "../types/player";
+import type Room from "../types/room";
 
 function addUserToRoom(data: string, roomes: Room[], player: Player): Room | undefined {
   const { indexRoom } = JSON.parse(data);

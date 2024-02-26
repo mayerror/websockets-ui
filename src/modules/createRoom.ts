@@ -1,5 +1,5 @@
-import Room from "../utils/room";
-import type Player from "../utils/player";
+import Room from "../types/room";
+import type Player from "../types/player";
 import { generateUniqID } from "./registerPlayer";
 
 function createRoom(player: Player, roomes: Room[]): void {
