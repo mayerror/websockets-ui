@@ -1,4 +1,4 @@
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer } from "ws";
 import { httpServer } from "./src/http_server";
 import { type MyWebSocket, type WsAnswer } from "./src/types";
 import type Player from "./src/utils/player";
@@ -11,7 +11,7 @@ import updateRoom from "./src/modules/updateRoom";
 import broadcast from "./src/utils/broadcast";
 import getPlayerById from "./src/utils/getPlayerById";
 import addUserToRoom from "./src/modules/addUserToRoom";
-import createGame from "./src/modules/createGame";
+import specBroadcast from "./src/utils/specBroadcast";
 
 const HTTP_PORT = 8181;
 const WS_PORT = 3000;
@@ -26,6 +26,9 @@ const wsClients: MyWebSocket[] = [];
 
 wss.on("connection", (ws: MyWebSocket) => {
   wsClients.push(ws);
+  // ws.on("close", () => {
+
+  // });
   ws.on("error", console.error);
   ws.on("message", (data) => {
     middleware(wss, data);
@@ -54,17 +57,10 @@ wss.on("connection", (ws: MyWebSocket) => {
             case "add_user_to_room": {
               const player = getPlayerById(players, ws.id);
               if (player !== undefined) {
-                console.log(wsClients.length);
                 const room = addUserToRoom(data, roomes, player);
-                console.log(room?.players);
-                wsClients
-                  .filter((client) => room?.players.find((player) => player.id === client.id))
-                  .forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN && room !== undefined) {
-                      client.send(createGame(room, client.id));
-                    }
-                  });
-                // broadcast(wss, updateRoom(roomes));
+                if (room !== undefined) {
+                  specBroadcast(wsClients, room);
+                }
               }
               break;
             }

@@ -1,11 +1,16 @@
-import { type WebSocketServer, WebSocket } from "ws";
+import WebSocket from "ws";
+import type Room from "./room";
+import { type MyWebSocket } from "../types";
+import createGame from "../modules/createGame";
 
-function specBroadcast(wss: WebSocketServer, answer: string): void {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(answer);
-    }
-  });
+function specBroadcast(wsClients: MyWebSocket[], room: Room): void {
+  wsClients
+    .filter((client) => room?.players.find((player) => player.id === client.id))
+    .forEach((client) => {
+      if (client.readyState === WebSocket.OPEN && room !== undefined) {
+        client.send(createGame(room, client.id));
+      }
+    });
 }
 
 export default specBroadcast;
