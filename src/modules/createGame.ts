@@ -1,20 +1,13 @@
-// import createAnswer from "../utils/createAnswer";
-// import Room from "../utils/room";
-// import type Player from "../utils/player";
-// import { generateUniqID } from "./registerPlayer";
+import createAnswer from "../utils/createAnswer";
+import type Room from "../utils/room";
 
-// function createRoom(player: Player, roomes: Room[]): string {
-//   const roomID = generateUniqID(roomes);
-//   const game = new Room(player, roomID);
+function createGame(room: Room, id: number): string {
+  const data = {
+    idGame: room.id,
+    idPlayer: id
+  };
 
-//   roomes.push(game);
+  return createAnswer("create_game", data);
+}
 
-//   const data = {
-//     idGame: game.id,
-//     idPlayer: player.id
-//   };
-
-//   return createAnswer("create_game", data);
-// }
-
-// export default createRoom;
+export default createGame;

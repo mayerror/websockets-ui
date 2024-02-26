@@ -1,4 +1,4 @@
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { httpServer } from "./src/http_server";
 import { type MyWebSocket, type WsAnswer } from "./src/types";
 import type Player from "./src/utils/player";
@@ -9,6 +9,9 @@ import updateWinners from "./src/modules/updateWinners";
 import createRoom from "./src/modules/createRoom";
 import updateRoom from "./src/modules/updateRoom";
 import broadcast from "./src/utils/broadcast";
+import getPlayerById from "./src/utils/getPlayerById";
+import addUserToRoom from "./src/modules/addUserToRoom";
+import createGame from "./src/modules/createGame";
 
 const HTTP_PORT = 8181;
 const WS_PORT = 3000;
@@ -19,8 +22,10 @@ const wss = new WebSocketServer({ port: WS_PORT }, () => {
 
 export const players: Player[] = [];
 export const roomes: Room[] = [];
+const wsClients: MyWebSocket[] = [];
 
 wss.on("connection", (ws: MyWebSocket) => {
+  wsClients.push(ws);
   ws.on("error", console.error);
   ws.on("message", (data) => {
     middleware(wss, data);
@@ -39,11 +44,28 @@ wss.on("connection", (ws: MyWebSocket) => {
               break;
             }
             case "create_room": {
-              const player = players.filter((player) => {
-                return player.id === ws.id;
-              })[0];
-              createRoom(player, roomes);
-              broadcast(wss, updateRoom(roomes));
+              const player = getPlayerById(players, ws.id);
+              if (player !== undefined) {
+                createRoom(player, roomes);
+                broadcast(wss, updateRoom(roomes));
+              }
+              break;
+            }
+            case "add_user_to_room": {
+              const player = getPlayerById(players, ws.id);
+              if (player !== undefined) {
+                console.log(wsClients.length);
+                const room = addUserToRoom(data, roomes, player);
+                console.log(room?.players);
+                wsClients
+                  .filter((client) => room?.players.find((player) => player.id === client.id))
+                  .forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN && room !== undefined) {
+                      client.send(createGame(room, client.id));
+                    }
+                  });
+                // broadcast(wss, updateRoom(roomes));
+              }
               break;
             }
             default:
