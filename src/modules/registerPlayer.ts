@@ -11,7 +11,12 @@ export function generateUniqID<T>(itemList: Array<T & { id?: number }>): number 
   }
 }
 
-function registerPlayer(data: string, players: Player[], ws: MyWebSocket): string {
+function registerPlayer(
+  data: string,
+  players: Player[],
+  ws: MyWebSocket,
+  wsClients: MyWebSocket[]
+): string {
   const { name, password } = JSON.parse(data);
   if (typeof name === "string" && typeof password === "string") {
     const id = generateUniqID(players);
@@ -22,9 +27,21 @@ function registerPlayer(data: string, players: Player[], ws: MyWebSocket): strin
       errorText: ""
     };
 
-    if (players.some((player) => player.name === name)) {
-      data.error = true;
-      data.errorText = "This name already exists";
+    const player = players.find((player) => player.name === name);
+    if (player !== undefined) {
+      if (player.password === password) {
+        const isCurrent = wsClients.some((client) => client.id === player.id);
+        if (isCurrent) {
+          data.error = true;
+          data.errorText = `The session with the ${player.name} name is currently open`;
+        } else {
+          data.index = player.id;
+          ws.id = player.id;
+        }
+      } else {
+        data.error = true;
+        data.errorText = "Incorrect password";
+      }
     } else {
       players.push(new Player(name, password, id));
       ws.id = id;

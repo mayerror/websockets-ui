@@ -3,7 +3,7 @@ import type Room from "../utils/room";
 
 function updateRoom(roomes: Room[]): string {
   const availableRoomes = roomes
-    .filter((room) => room.players.length < 2)
+    .filter((room) => room.players.length === 1)
     .map((room) => {
       return {
         roomId: room.id,

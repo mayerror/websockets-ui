@@ -26,9 +26,13 @@ const wsClients: MyWebSocket[] = [];
 
 wss.on("connection", (ws: MyWebSocket) => {
   wsClients.push(ws);
-  // ws.on("close", () => {
-
-  // });
+  ws.on("close", () => {
+    const indextoDel = wsClients.indexOf(ws);
+    if (indextoDel !== -1) {
+      console.log(`Websocket with id ${ws.id} is closed!`);
+      wsClients.splice(indextoDel, 1);
+    }
+  });
   ws.on("error", console.error);
   ws.on("message", (data) => {
     middleware(wss, data);
@@ -41,7 +45,7 @@ wss.on("connection", (ws: MyWebSocket) => {
         if (type.length > 0) {
           switch (type) {
             case "reg": {
-              ws.send(registerPlayer(data, players, ws));
+              ws.send(registerPlayer(data, players, ws, wsClients));
               broadcast(wss, updateWinners(players));
               broadcast(wss, updateRoom(roomes));
               break;
