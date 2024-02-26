@@ -12,6 +12,7 @@ import broadcast from "./src/utils/broadcast";
 import getPlayerById from "./src/utils/getPlayerById";
 import addUserToRoom from "./src/modules/addUserToRoom";
 import specBroadcast from "./src/utils/specBroadcast";
+import addShips from "./src/modules/addShips";
 
 const HTTP_PORT = 8181;
 const WS_PORT = 3000;
@@ -63,8 +64,15 @@ wss.on("connection", (ws: MyWebSocket) => {
               if (player !== undefined) {
                 const room = addUserToRoom(data, roomes, player);
                 if (room !== undefined) {
-                  specBroadcast(wsClients, room);
+                  specBroadcast(wsClients, room, "CG");
                 }
+              }
+              break;
+            }
+            case "add_ships": {
+              const room = addShips(data, roomes);
+              if (room !== undefined && room.shipsLaunched()) {
+                specBroadcast(wsClients, room, "SG");
               }
               break;
             }

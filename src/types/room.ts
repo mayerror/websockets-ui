@@ -12,6 +12,10 @@ class Room {
   gameIsOn(): boolean {
     return this.players.length === 2;
   }
+
+  shipsLaunched(): boolean {
+    return this.players.every((player) => player.ships?.length === 10);
+  }
 }
 
 export default Room;
