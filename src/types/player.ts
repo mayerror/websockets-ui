@@ -6,6 +6,7 @@ class Player {
   id: number;
   wins: number;
   ships?: Ship[];
+  cellsLeft: number;
 
   constructor(name: string, password: string, id: number) {
     this.name = name;
@@ -13,6 +14,7 @@ class Player {
     this.id = id;
     this.wins = 0;
     this.ships = [];
+    this.cellsLeft = 20;
   }
 }
 

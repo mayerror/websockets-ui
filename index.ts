@@ -13,6 +13,7 @@ import getPlayerById from "./src/utils/getPlayerById";
 import addUserToRoom from "./src/modules/addUserToRoom";
 import specBroadcast from "./src/utils/specBroadcast";
 import addShips from "./src/modules/addShips";
+import handleAttack from "./src/modules/handleAttack";
 
 const HTTP_PORT = 8181;
 const WS_PORT = 3000;
@@ -74,6 +75,18 @@ wss.on("connection", (ws: MyWebSocket) => {
               if (room !== undefined && room.shipsLaunched()) {
                 specBroadcast(wsClients, room, "SG");
                 specBroadcast(wsClients, room, "ST");
+              }
+              break;
+            }
+            case "attack": {
+              const { indexPlayer } = JSON.parse(data);
+              const room = handleAttack(data, roomes);
+              if (room !== undefined && indexPlayer === room.currentTurn) {
+                if (room !== undefined) {
+                  specBroadcast(wsClients, room, "AF");
+                  room.changeTurnId();
+                  specBroadcast(wsClients, room, "ST");
+                }
               }
               break;
             }
