@@ -90,6 +90,18 @@ wss.on("connection", (ws: MyWebSocket) => {
               }
               break;
             }
+            case "randomAttack": {
+              const { indexPlayer } = JSON.parse(data);
+              const room = handleAttack(data, roomes);
+              if (room !== undefined && indexPlayer === room.currentTurn) {
+                if (room !== undefined) {
+                  specBroadcast(wsClients, room, "AF");
+                  room.changeTurnId();
+                  specBroadcast(wsClients, room, "ST");
+                }
+              }
+              break;
+            }
             default:
               break;
           }
