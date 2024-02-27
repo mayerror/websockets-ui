@@ -1,0 +1,21 @@
+import createAnswer from "../utils/createAnswer";
+import type Room from "../types/room";
+
+function updateRoom(roomes: Room[]): string {
+  const availableRoomes = roomes
+    .filter((room) => room.players.length === 1)
+    .map((room) => {
+      return {
+        roomId: room.id,
+        roomUsers: room.players.map((player) => {
+          return {
+            name: player.name,
+            index: player.id
+          };
+        })
+      };
+    });
+  return createAnswer("update_room", availableRoomes);
+}
+
+export default updateRoom;
