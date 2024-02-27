@@ -78,26 +78,21 @@ wss.on("connection", (ws: MyWebSocket) => {
               }
               break;
             }
-            case "attack": {
-              const { indexPlayer } = JSON.parse(data);
-              const room = handleAttack(data, roomes);
-              if (room !== undefined && indexPlayer === room.currentTurn) {
-                if (room !== undefined) {
-                  specBroadcast(wsClients, room, "AF");
-                  room.changeTurnId();
-                  specBroadcast(wsClients, room, "ST");
-                }
-              }
-              break;
-            }
+            case "attack":
             case "randomAttack": {
               const { indexPlayer } = JSON.parse(data);
               const room = handleAttack(data, roomes);
               if (room !== undefined && indexPlayer === room.currentTurn) {
                 if (room !== undefined) {
                   specBroadcast(wsClients, room, "AF");
-                  room.changeTurnId();
-                  specBroadcast(wsClients, room, "ST");
+                  if (room.winner === 0) {
+                    room.changeTurnId();
+                    specBroadcast(wsClients, room, "ST");
+                  } else {
+                    specBroadcast(wsClients, room, "FG");
+                    broadcast(wss, updateWinners(players));
+                    broadcast(wss, updateRoom(roomes));
+                  }
                 }
               }
               break;

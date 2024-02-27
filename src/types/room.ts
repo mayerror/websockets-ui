@@ -7,6 +7,7 @@ class Room {
   lastAttack: "miss" | "shot" | "kill";
   x: number;
   y: number;
+  winner: number;
 
   constructor(player: Player, id: number) {
     this.players = [player];
@@ -15,6 +16,7 @@ class Room {
     this.lastAttack = "miss";
     this.x = 0;
     this.y = 0;
+    this.winner = 0;
   }
 
   gameIsOn(): boolean {
@@ -37,7 +39,8 @@ class Room {
   checkAttack(playerId: number, x: number, y: number): void {
     this.x = x;
     this.y = y;
-    const enemyShips = this.players.find((player) => player.id !== playerId)?.ships;
+    const enemy = this.players.find((player) => player.id !== playerId);
+    const enemyShips = enemy?.ships;
     if (enemyShips !== undefined) {
       const horizonShips = enemyShips.filter((ship) => !ship.direction);
       const verticalShips = enemyShips.filter((ship) => ship.direction);
@@ -56,6 +59,16 @@ class Room {
       if (horizonShip.length > 0 || verticalShip.length > 0) {
         console.log("shot");
         this.lastAttack = "shot";
+        if (enemy !== undefined) {
+          enemy.cellsLeft -= 1;
+          if (enemy.cellsLeft === 0) {
+            this.winner = playerId;
+            const currentPlayer = this.players.find((player) => playerId === player.id);
+            if (currentPlayer !== undefined) {
+              currentPlayer.wins += 1;
+            }
+          }
+        }
       } else {
         console.log("miss");
         this.lastAttack = "miss";

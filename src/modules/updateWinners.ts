@@ -4,7 +4,7 @@ import type Player from "../types/player";
 function updateWinners(players: Player[]): string {
   if (players.length > 0) {
     const winners = players
-      .sort((a, b) => a.wins - b.wins)
+      .sort((a, b) => b.wins - a.wins)
       .map((player) => {
         return { name: player.name, wins: player.wins };
       });

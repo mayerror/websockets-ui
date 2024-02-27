@@ -5,8 +5,13 @@ import createGame from "../modules/createGame";
 import startGame from "../modules/startGame";
 import attackFeedback from "../modules/attackFeedback";
 import setTurn from "../modules/setTurn";
+import finishGame from "../modules/finishGame";
 
-function specBroadcast(wsClients: MyWebSocket[], room: Room, SW: "CG" | "SG" | "ST" | "AF"): void {
+function specBroadcast(
+  wsClients: MyWebSocket[],
+  room: Room,
+  SW: "CG" | "SG" | "ST" | "AF" | "FG"
+): void {
   wsClients
     .filter((client) => room?.players.find((player) => player.id === client.id))
     .forEach((client) => {
@@ -19,6 +24,8 @@ function specBroadcast(wsClients: MyWebSocket[], room: Room, SW: "CG" | "SG" | "
           client.send(setTurn(room));
         } else if (SW === "AF") {
           client.send(attackFeedback(room, client.id));
+        } else if (SW === "FG") {
+          client.send(finishGame(room));
         }
       }
     });
